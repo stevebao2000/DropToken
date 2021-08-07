@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">DropToken</string>
+    <string name="drop_token">Drop Token</string>
+    <string-array name="Levels">
+        <item>You play first</item>
+        <item>Server play first</item>
+    </string-array>
 </resources>
