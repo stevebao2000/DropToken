@@ -95,6 +95,8 @@ class MainActivity : AppCompatActivity() {
                 gameOver()
             } else {
                 println(e.message())
+                gameOver()
+                return
             }
         }
         Log.e(TAG, "Response from server: $result" )
@@ -134,6 +136,7 @@ class MainActivity : AppCompatActivity() {
         Log.e(TAG, "nextStep() index: $index")
         if (!userMode) {
             val position = TokenUtil.getPosition(index)
+            Log.e(TAG, "nextStep: position: i: ${position.i}, j: ${position.j}")
             if (viewModel.isValidPosition(position)) {
                 userMode = true
                 val server = 3 - player
