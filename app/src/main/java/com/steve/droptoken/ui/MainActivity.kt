@@ -18,11 +18,9 @@ import com.steve.droptoken.api.TokenService
 import com.steve.droptoken.databinding.ActivityMainBinding
 import com.steve.droptoken.util.GlideApp
 import com.steve.droptoken.util.TokenUtil
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 
@@ -34,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private var userMode = true
     private var playMode = Constants.PLAYER_FIRST
     private var player = 1
+    private var server = 2
     val images = arrayOf(
         R.id.img0, R.id.img1, R.id.img2, R.id.img3, R.id.img4, R.id.img5, R.id.img6, R.id.img7,
         R.id.img8, R.id.img9, R.id.img10, R.id.img11, R.id.img12, R.id.img13, R.id.img14, R.id.img15
@@ -105,9 +104,17 @@ class MainActivity : AppCompatActivity() {
         else {
             val index = result.get(result.lastIndex)
             updateUI(index)
+            winTheGame(server, index)
+            // waiting for player's input if not win.
         }
     }
 
+    private fun checkGameWinning(role: Int, index: Int) {
+        var name = if (role == player) "You" else "Server"
+        if (viewModel.checkGameWinning(index)) {
+            Toast.makeText(applicationContext, "$name won the game!", Toast.LENGTH_LONG).show()
+        }
+    }
     private suspend fun gameOver() {
         withContext(Main) {
             cleanGame(true)
@@ -148,7 +155,8 @@ class MainActivity : AppCompatActivity() {
                 println(viewModel.tokens)
             } else {
                 Log.e(TAG, "The returned index from server is invalid. retry... " )
-                serverMove()
+                if (!winTheGame(server, index))
+                    serverMove()
             }
         }
     }
@@ -166,10 +174,30 @@ class MainActivity : AppCompatActivity() {
                     .override(Constants.IMAGE_SIZE, Constants.IMAGE_SIZE)
                     .into(view)
                 println(viewModel.tokens)
-                serverMove()
+
+                if (!winTheGame(player, index))
+                    serverMove()
             } else {
                 Toast.makeText(this, "Please select a valid spot", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun winTheGame(who: Int, index: Int) : Boolean{
+        val name = if (who == player) "You" else "Server"
+        if (viewModel.checkGameWinning(index)) {
+            Toast.makeText(this@MainActivity, "$name won the game!", Toast.LENGTH_LONG).show()
+            // waiting for 2 second, then clean the game.
+            delayCleanup()
+            return true
+        }
+        return false
+    }
+
+    private fun delayCleanup() {
+        CoroutineScope(IO).launch {
+            delay(2000)
+            cleanGame(false)
         }
     }
 

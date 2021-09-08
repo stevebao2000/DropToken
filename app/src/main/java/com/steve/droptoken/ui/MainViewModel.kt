@@ -23,6 +23,56 @@ class MainViewModel : ViewModel() {
         return tokens.get(TokenUtil.getArrayIndexFromPosition(i,j))
     }
 
+    fun checkGameWinning(index: Int) : Boolean {
+        val position = TokenUtil.getPositionFromArrayIndex(index)
+
+        if (position.j <= Constants.MATRIX_SIZE - 1)
+            if (horizontalFilledSameColor(position.j)) return true
+
+        if (position.j == Constants.MATRIX_SIZE - 1) {
+            if (verticalFilledSameColor(position.i)) return true
+        }
+        if (diagnal1FilledSameColor()) return true
+        if (diagnal2FilledSameColor()) return true
+        return false
+    }
+
+    // diagnal from up-left to lower-right
+    private fun diagnal1FilledSameColor() : Boolean {
+        val token = getTokenValue(0, 3)
+        if (token == Constants.EMPTY_TOKEN) return false
+        for (i: Int in 1 until Constants.MATRIX_SIZE) {
+            if (getTokenValue(i, 3 -i) != token) return false
+        }
+        return true
+    }
+
+    // diagnal from lower-left to up-right
+    private fun diagnal2FilledSameColor() : Boolean {
+        val token = getTokenValue(0, 0)
+        if (token == Constants.EMPTY_TOKEN) return false
+        for (i: Int in 1 until Constants.MATRIX_SIZE) {
+            if (getTokenValue(i, i) != token) return false
+        }
+        return true
+    }
+
+    private fun horizontalFilledSameColor(j: Int) : Boolean {
+        val token = getTokenValue(0, j)
+        if (token == Constants.EMPTY_TOKEN) return false
+        for (i: Int in 1 until Constants.MATRIX_SIZE)
+            if (getTokenValue(i, j) != token) return false
+        return true
+    }
+
+    private fun verticalFilledSameColor(i: Int) : Boolean {
+        val token = getTokenValue(i, 0)
+        if (token == Constants.EMPTY_TOKEN) return false
+        for (j: Int in 1 until Constants.MATRIX_SIZE)
+            if (getTokenValue(i, j) != token) return false
+        return true
+    }
+
     private fun isTokenEmpty(i: Int, j: Int) : Boolean {
         return getTokenValue(i,j) == Constants.EMPTY_TOKEN
     }
