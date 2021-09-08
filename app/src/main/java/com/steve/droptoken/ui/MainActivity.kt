@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
     private fun nextStep(index: Int) {
         Log.e(TAG, "nextStep() index: $index")
         if (!userMode) {
-            val position = TokenUtil.getPosition(index)
+            val position = TokenUtil.getPositionFromArrayIndex(index)
             Log.e(TAG, "nextStep: position: i: ${position.i}, j: ${position.j}")
             if (viewModel.isValidPosition(position)) {
                 userMode = true
@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
     private fun nextStep(view: ImageView, index: Int) {
 
         if (userMode) {
-            val position = TokenUtil.getPosition(index)
+            val position = TokenUtil.getPositionFromArrayIndex(index)
             if (viewModel.isValidPosition(position)) {
                 userMode = false
                 viewModel.assignTokenValue(index, player)

@@ -20,7 +20,7 @@ class MainViewModel : ViewModel() {
     var moveSteps: MutableList<Int> = mutableListOf()
 
     private fun getTokenValue(i: Int, j: Int): Int {
-        return tokens.get(TokenUtil.getIndex(i,j))
+        return tokens.get(TokenUtil.getArrayIndexFromPosition(i,j))
     }
 
     private fun isTokenEmpty(i: Int, j: Int) : Boolean {
@@ -52,7 +52,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun assignTokenValue(index: Int, value: Int): Boolean {
-        if (!TokenUtil.validValue(value)) return false
+        if (!TokenUtil.validTokenValue(value)) return false
 
         tokens[index] = value
         moveSteps.add(index)
@@ -67,7 +67,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun getImage(i: Int): Int {
-        if (TokenUtil.validIndex(i))
+        if (TokenUtil.validArrayIndex(i))
             return tokenImages.get(tokens.get(i))
         throw IllegalArgumentException("Invalid index: $i")
     }
